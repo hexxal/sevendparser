@@ -1,6 +1,7 @@
 def test_correct_weapon_count(parser):
     assert len(parser.weapons) == 49
 
+
 def test_weapon_name(parser):
     first_five_weapons = parser.weapons[:5]
     assert first_five_weapons[0].name == "Bone Knife"
@@ -8,6 +9,7 @@ def test_weapon_name(parser):
     assert first_five_weapons[2].name == "Candy Cane Knife"
     assert first_five_weapons[3].name == "Machete"
     assert first_five_weapons[4].name == "Wooden Club"
+
 
 def test_weapon_entity_damage(parser):
     first_five_weapons = parser.weapons[:5]

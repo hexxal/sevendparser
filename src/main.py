@@ -1,11 +1,12 @@
 import csv
 import xml.etree.ElementTree as ET
 
+
 class SevendParser:
     def __init__(self, file_path, language="en-us"):
         self.language = language
         self.file_path = file_path
-        self._items_tree = ET.parse(file_path + '/items.xml')
+        self._items_tree = ET.parse(file_path + "/items.xml")
         self._items_root = self._items_tree.getroot()
 
         self.weapons = self.get_weapons()
@@ -44,10 +45,10 @@ class SevendBase:
             raise Exception("That is not a supported language")
 
         # TODO: Hard-coded path
-        with open('config/Localization.txt', 'r', newline='') as csv_file:
+        with open("config/Localization.txt", "r", newline="") as csv_file:
             for line in csv_file:
                 if line.startswith(string):
-                    return line.split(',')[self.LANGUAGE_INDEXES[language]]
+                    return line.split(",")[self.LANGUAGE_INDEXES[language]]
 
 
 class SevendWeapon(SevendBase):
@@ -55,7 +56,9 @@ class SevendWeapon(SevendBase):
         self.item_node = item_node
         self.language = language
         self.original_name = self.item_node.attrib["name"]
-        self.name = self.get_translated_string(self.original_name, language=self.language)
+        self.name = self.get_translated_string(
+            self.original_name, language=self.language
+        )
         self.entity_damage = self.get_entity_damage(self.item_node)
 
     def get_entity_damage(self, item_node):
