@@ -1,12 +1,11 @@
-import csv
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree
 
 
 class SevendParser:
     def __init__(self, file_path, language="en-us"):
         self.language = language
         self.file_path = file_path
-        self._items_tree = ET.parse(file_path + "/items.xml")
+        self._items_tree = ElementTree.parse(file_path + "/items.xml")
         self._items_root = self._items_tree.getroot()
 
         self.weapons = self.get_weapons()
@@ -15,10 +14,10 @@ class SevendParser:
         weapons = []
         for item_node in self._items_root:
             tags_node = item_node.find("*/[@name='Tags']")
-            if tags_node != None:
+            if tags_node is not None:
                 tags = tags_node.attrib["value"].split(",")
                 # TODO: Ignore admin/god tools for now
-                if "weapon" in tags and not "admin" in item_node.attrib["name"].lower():
+                if "weapon" in tags and "admin" not in item_node.attrib["name"].lower():
                     weapon = SevendWeapon(item_node=item_node, language=self.language)
                     weapons.append(weapon)
         return weapons
@@ -45,7 +44,7 @@ class SevendBase:
             raise Exception("That is not a supported language")
 
         # TODO: Hard-coded path
-        with open("config/Localization.txt", "r", newline="") as csv_file:
+        with open("config/Localization.txt", "r", newline="", encoding="utf-8") as csv_file:
             for line in csv_file:
                 if line.startswith(string):
                     return line.split(",")[self.LANGUAGE_INDEXES[language]]
@@ -66,7 +65,7 @@ class SevendWeapon(SevendBase):
         try:
             # TODO: Fix this try-except, it's only there temporary.
             # Some weapons give funny entity damage values, debug here.
-            return effect_group.find(f"*/[@name='EntityDamage']").attrib["value"]
+            return effect_group.find("*/[@name='EntityDamage']").attrib["value"]
         except:
             return None
 
