@@ -2,7 +2,8 @@ import csv
 import xml.etree.ElementTree as ET
 
 class SevendParser:
-    def __init__(self, file_path):
+    def __init__(self, file_path, language="en-us"):
+        self.language = language
         self.file_path = file_path
         self._items_tree = ET.parse(file_path + '/items.xml')
         self._items_root = self._items_tree.getroot()
@@ -17,26 +18,44 @@ class SevendParser:
                 tags = tags_node.attrib["value"].split(",")
                 # TODO: Ignore admin/god tools for now
                 if "weapon" in tags and not "admin" in item_node.attrib["name"].lower():
-                    weapon = SevendWeapon(item_node=item_node)
+                    weapon = SevendWeapon(item_node=item_node, language=self.language)
                     weapons.append(weapon)
         return weapons
 
 
 class SevendBase:
+    LANGUAGE_INDEXES = {
+        "en-us": 5,
+        "de-de": 7,
+        "es-mx": 8,
+        "fr-fr": 9,
+        "it-it": 10,
+        "ja-jp": 11,
+        "pl-pl": 13,
+        "pt-br": 14,
+        "ru-ru": 15,
+        "tr-tr": 16,
+        "zh-cn": 17,
+        "zh-tw": 18,
+    }
 
-    def get_translated_string(self, string):
-        # TODO: Language support. Currently defaults to english, which is index 5.
+    def get_translated_string(self, string, language):
+        if language not in self.LANGUAGE_INDEXES.keys():
+            raise Exception("That is not a supported language")
+
+        # TODO: Hard-coded path
         with open('config/Localization.txt', 'r', newline='') as csv_file:
             for line in csv_file:
                 if line.startswith(string):
-                    return line.split(',')[5]
+                    return line.split(',')[self.LANGUAGE_INDEXES[language]]
 
 
 class SevendWeapon(SevendBase):
-    def __init__(self, item_node):
+    def __init__(self, item_node, language):
         self.item_node = item_node
+        self.language = language
         self.original_name = self.item_node.attrib["name"]
-        self.name = self.get_translated_string(self.item_node.attrib["name"])
+        self.name = self.get_translated_string(self.original_name, language=self.language)
         self.entity_damage = self.get_entity_damage(self.item_node)
 
     def get_entity_damage(self, item_node):

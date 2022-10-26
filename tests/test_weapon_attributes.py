@@ -16,8 +16,3 @@ def test_weapon_entity_damage(parser):
     assert first_five_weapons[2].entity_damage == "6.6"
     assert first_five_weapons[3].entity_damage == "19.8"
     assert first_five_weapons[4].entity_damage == "13.8"
-
-def test_random_debugging(parser):
-    for foo in parser.weapons:
-        # TODO: Some weapons (ranged it seems) give funky entity damage 
-        print(f"{foo.name}: {foo.entity_damage}")
